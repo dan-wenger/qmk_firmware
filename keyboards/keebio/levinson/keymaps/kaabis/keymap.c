@@ -19,7 +19,7 @@ enum custom_keycodes {
   MY_DOT, MY_COMM, MY_QUES, MY_QUOT, MY_QUOT_TG, MY_SPMIN, MY_CURR,
   MY_INS, PAUSE, OSM_ESC, LAYR_TG, MOUSE_U, MOUSE_D,
   TVP_DESL, PS_B, PS_E, PS_B_E,
-  COUNT_UP
+  COUNT_UP, COUNT_RESET
 };
 
 // ANCHOR - Unicode Map
@@ -188,19 +188,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 // LAYER - Numbers
 [NUMB] = LAYOUT_ortho_4x12( \
-  KC_HOME, KC_END,  KC_7,    KC_8,    KC_9,   COUNT_UP, _______, _______, _______, _______, _______, _______, \
-  KC_PGUP, KC_PGDN, KC_4,    KC_5,    KC_6,   KC_0,     _______, _______, _______, _______, _______, _______, \
-  _______, XXXXXXX, KC_1,    KC_2,    KC_3,   KC_DOT,   _______, _______, KC_SCLN, KC_COLN, KC_EXLM, _______, \
-  _______, _______, _______, KC_DEL, XXXXXXX, _______,  _______, KC_NO,   _______, _______, _______, _______  \
+  KC_HOME,      KC_END,  KC_7,    KC_8,   KC_9,    _______, _______, _______, _______, _______, _______, _______, \
+  KC_PGUP,      KC_PGDN, KC_4,    KC_5,   KC_6,    KC_0,    _______, _______, _______, _______, _______, _______, \
+  COUNT_RESET,  XXXXXXX, KC_1,    KC_2,   KC_3,    KC_DOT,  _______, _______, KC_SCLN, KC_COLN, KC_EXLM, _______, \
+  COUNT_UP,     _______, _______, KC_DEL, XXXXXXX, _______, _______, KC_NO,   _______, _______, _______, _______  \
 ),
 /* .-----------------------------------------------. .-----------------------------------------------.
  * | home  | end   | 7     | 8     | 9     |Count+1| | _____ | _____ | _____ | _____ | _____ | _____ |
  * |-------+-------+-------+-------+-------+-------| |-------+-------+-------+-------+-------+-------|
  * | pgUp  | pgDwn | 4     | 5     | 6     | 0     | | _____ | _____ | _____ | _____ | _____ | _____ |
  * |-------+-------+-------+-------+-------+-------| |-------+-------+-------+-------+-------+-------|
- * | _____ |       | 1     | 2     | 3     | .     | | _____ | _____ |   ;   |   :   |   !   | _____ |
+ * |C.Reset|       | 1     | 2     | 3     | .     | | _____ | _____ |   ;   |   :   |   !   | _____ |
  * |-------+-------+-------+-------+-------+-------| |-------+-------+-------+-------+-------+-------|
- * | _____ | _____ | _____ | Del   |       |[NUMB ]| | _____________ | _____ | _____ | _____ | _____ |
+ * |Count+1| _____ | _____ | Del   |       |[NUMB ]| | _____________ | _____ | _____ | _____ | _____ |
  * '-----------------------------------------------' '-----------------------------------------------'
  */
 // LAYER - Hotkeys (+ Left Mirrored)
@@ -272,6 +272,21 @@ bool ps_eraser = false;
 // last used macro layer
 static bool inside_macro = false;
 int last_macro_layer = 0;
+
+// counter
+int counter_curr_number = 1;
+char counter_string[3] = "01";
+// Function to convert an integer to a string with two digits
+void intToString(int num, char* result) {
+    // Extract tens and ones digits
+    int tens = num / 10;
+    int ones = num % 10;
+
+    // Convert digits to characters and store in the result array
+    result[0] = '0' + tens;  // Convert tens digit to character
+    result[1] = '0' + ones;  // Convert ones digit to character
+    result[2] = '\0';        // Null terminator
+}
 
 
 // ANCHOR - Macro functions
@@ -541,7 +556,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
     case COUNT_UP:
         if (record->event.pressed) {
-            SEND_STRING("NEW KEY");
+            send_string(counter_string);
+        } else {
+            counter_curr_number++;
+            intToString(counter_curr_number, counter_string);
+        }
+        break;
+    case COUNT_RESET:
+        if (record->event.pressed) {
+            counter_curr_number = 1;
+            intToString(counter_curr_number, counter_string);
         }
         break;
     }
