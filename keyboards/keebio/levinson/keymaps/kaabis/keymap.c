@@ -18,7 +18,8 @@ enum custom_keycodes {
   MY_RSET,
   MY_DOT, MY_COMM, MY_QUES, MY_QUOT, MY_QUOT_TG, MY_SPMIN, MY_CURR,
   MY_INS, PAUSE, OSM_ESC, LAYR_TG, MOUSE_U, MOUSE_D,
-  TVP_DESL, PS_B, PS_E, PS_B_E
+  TVP_DESL, PS_B, PS_E, PS_B_E,
+  COUNT_UP
 };
 
 // ANCHOR - Unicode Map
@@ -153,10 +154,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 // LAYER - Numpad
 [NUMP] = LAYOUT_ortho_4x12( \
-  _______, _______, _______, _______, _______, _______, KC_NUMLOCK, KC_PSLS, KC_P7,   KC_P8, KC_P9,            KC_PAST, \
-  _______, _______, _______, _______, _______, _______, XXXXXXX,    KC_PEQL, KC_P4,   KC_P5, KC_P6,            KC_PENT, \
-  _______, _______, _______, _______, _______, _______, XXXXXXX,    XXXXXXX, KC_P1,   KC_P2, KC_P3,            KC_PPLS, \
-  _______, _______, _______, _______, _______, _______, KC_RALT,    KC_NO,   _______, KC_P0, LT(FROW,KC_PDOT), KC_PMNS  \
+  _______, _______, _______, _______, _______, _______, KC_NUM,  KC_PSLS, KC_P7,   KC_P8, KC_P9,            KC_PAST, \
+  _______, _______, _______, _______, _______, _______, XXXXXXX, KC_PEQL, KC_P4,   KC_P5, KC_P6,            KC_PENT, \
+  _______, _______, _______, _______, _______, _______, XXXXXXX, XXXXXXX, KC_P1,   KC_P2, KC_P3,            KC_PPLS, \
+  _______, _______, _______, _______, _______, _______, KC_RALT, KC_NO,   _______, KC_P0, LT(FROW,KC_PDOT), KC_PMNS  \
 ),
 /* .-----------------------------------------------. .-----------------------------------------------.
  * | _____ | _____ | _____ | _____ | _____ | _____ | |NumLock| Num/  | Num7  | Num8  | Num9  | Num*  |
@@ -187,13 +188,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 // LAYER - Numbers
 [NUMB] = LAYOUT_ortho_4x12( \
-  KC_HOME, KC_END,  KC_7,    KC_8,    KC_9,   XXXXXXX, _______, _______, _______,   _______, _______, _______, \
-  KC_PGUP, KC_PGDN, KC_4,    KC_5,    KC_6,   KC_0,    _______, _______, _______,   _______, _______, _______, \
-  _______, XXXXXXX, KC_1,    KC_2,    KC_3,   KC_DOT,  _______, _______, KC_SCOLON, KC_COLN, KC_EXLM, _______, \
-  _______, _______, _______, KC_DEL, XXXXXXX, _______, _______, KC_NO,   _______,   _______, _______, _______  \
+  KC_HOME, KC_END,  KC_7,    KC_8,    KC_9,   COUNT_UP, _______, _______, _______, _______, _______, _______, \
+  KC_PGUP, KC_PGDN, KC_4,    KC_5,    KC_6,   KC_0,     _______, _______, _______, _______, _______, _______, \
+  _______, XXXXXXX, KC_1,    KC_2,    KC_3,   KC_DOT,   _______, _______, KC_SCLN, KC_COLN, KC_EXLM, _______, \
+  _______, _______, _______, KC_DEL, XXXXXXX, _______,  _______, KC_NO,   _______, _______, _______, _______  \
 ),
 /* .-----------------------------------------------. .-----------------------------------------------.
- * | home  | end   | 7     | 8     | 9     |       | | _____ | _____ | _____ | _____ | _____ | _____ |
+ * | home  | end   | 7     | 8     | 9     |Count+1| | _____ | _____ | _____ | _____ | _____ | _____ |
  * |-------+-------+-------+-------+-------+-------| |-------+-------+-------+-------+-------+-------|
  * | pgUp  | pgDwn | 4     | 5     | 6     | 0     | | _____ | _____ | _____ | _____ | _____ | _____ |
  * |-------+-------+-------+-------+-------+-------| |-------+-------+-------+-------+-------+-------|
@@ -536,6 +537,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_E);
                 ps_eraser = true;
             }
+        }
+        break;
+    case COUNT_UP:
+        if (record->event.pressed) {
+            SEND_STRING("NEW KEY");
         }
         break;
     }
